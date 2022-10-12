@@ -1,0 +1,48 @@
+version: '3.3'
+
+services:
+  web:
+    depends_on:
+      - db
+      - redis
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app/
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+    restart: always
+    networks:
+      - practice
+
+  db:
+    image: bitnami/postgresql
+    ports:
+      - "${DB_PORT}:5432"
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+    env_file:
+      - ./.env
+    restart: always
+    networks:
+      - practice
+
+  redis:
+    image: bitnami/redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - app-network
+
+networks:
+  practice:
+  app-network:
