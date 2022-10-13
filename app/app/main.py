@@ -1,10 +1,7 @@
 from fastapi import FastAPI
-import databases
+from db.credentials import database
 
 app = FastAPI()
-DATABASE_URL = "postgresql://meduzzen_user:pass@db:5432/meduzzen_db"
-
-database = databases.Database(DATABASE_URL)
 
 
 @app.get('/')
