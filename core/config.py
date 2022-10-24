@@ -5,5 +5,5 @@ from dotenv import load_dotenv
 
 load_dotenv()
 config = Config(".env")
-DATABASE_URL = config('DATABASE_URL', cast=str)
+DATABASE_URL = config('EE_DATABASE_URL', cast=str)
 database = Database(DATABASE_URL)

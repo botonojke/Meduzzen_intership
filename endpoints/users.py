@@ -1,7 +1,7 @@
 from typing import List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from repositories.users import UserRepository
-from models.user import User, UserIn
+from models.user import User, UserCreate, UserRsposneId, UserUpdate
 from endpoints.depends import get_user_repository
 
 router = APIRouter()
@@ -15,11 +15,16 @@ async def read_users(
     return await users.get_all(limit=limit, skip=0)
 
 
-@router.post("/", response_model=User)
+@router.post("/", response_model=UserRsposneId)
 async def create_user(
-        user: UserIn,
+        user: UserCreate,
         users: UserRepository = Depends(get_user_repository)):
     return await users.create(u=user)
 
 
-
+@router.put("/", response_model=User)
+async def update_user(
+        id: int,
+        user: UserUpdate,
+        users: UserRepository = Depends(get_user_repository)):
+    return await users.update(id=id, u=user)

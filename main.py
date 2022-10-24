@@ -10,7 +10,7 @@ app.include_router(users.router, prefix='/users', tags=['users'])
 
 @app.get('/')
 async def status_root():
-    return {"status": "Workinng"}
+    return {"status": "Working"}
 
 
 @app.on_event("startup")
