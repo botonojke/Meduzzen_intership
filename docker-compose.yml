@@ -2,22 +2,22 @@ version: '3.3'
 
 services:
   web:
-    depends_on:
-      - db
-      - redis
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
+    container_name: fastapi_web_container
+    build: .
+    command: python main.py
     volumes:
-      - .:/app/
+      - .:/app
     env_file:
       - ./.env
     environment:
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_DATABASE}
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
     restart: always
     networks:
       - practice
@@ -26,6 +26,8 @@ services:
     image: bitnami/postgresql
     ports:
       - "${DB_PORT}:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -35,6 +37,11 @@ services:
     restart: always
     networks:
       - practice
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: bitnami/redis
