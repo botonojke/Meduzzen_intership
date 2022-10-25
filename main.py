@@ -1,6 +1,7 @@
 from db.base import database
 from fastapi import FastAPI
 from endpoints import users
+from core.config import WEB_PORT, WEB_HOST
 import uvicorn
 
 
@@ -23,4 +24,4 @@ async def shutdown():
     await database.disconnect()
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", port=8080, host="0.0.0.0", reload=True)
+    uvicorn.run("main:app", port=int(WEB_PORT), host=WEB_HOST, reload=True)

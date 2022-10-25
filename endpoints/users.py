@@ -11,14 +11,14 @@ router = APIRouter()
 async def read_users(
         users: UserRepository = Depends(get_user_repository),
         limit: int = 100,
-        skip: int = 0):
+        skip: int = 0) -> List[User]:
     return await users.get_all(limit=limit, skip=0)
 
 
 @router.post("/", response_model=UserRsposneId)
 async def create_user(
         user: UserCreate,
-        users: UserRepository = Depends(get_user_repository)):
+        users: UserRepository = Depends(get_user_repository)) -> UserRsposneId:
     return await users.create(u=user)
 
 
@@ -26,5 +26,5 @@ async def create_user(
 async def update_user(
         id: int,
         user: UserUpdate,
-        users: UserRepository = Depends(get_user_repository)):
+        users: UserRepository = Depends(get_user_repository)) -> UserUpdate:
     return await users.update(id=id, u=user)

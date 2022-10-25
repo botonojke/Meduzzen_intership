@@ -10,8 +10,8 @@ class User(BaseModel):
     hashed_password: str
     is_active: bool
     is_admin: bool
-    created_at: datetime.datetime
-    updated_at: datetime.datetime
+    create_date: datetime.datetime
+    update_date: datetime.datetime
 
 
 class UserCreate(BaseModel):
@@ -33,14 +33,14 @@ class UserRsposneId(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    name: str
-    password: constr(min_length=8)
-    password2: str
-    is_active: bool = True
-    updated_at: datetime.datetime = datetime.datetime.utcnow()
+    name: Optional[str]
+    password: Optional[constr(min_length=8)]
+    password2: Optional[str]
+
 
     @validator("password2")
     def password_match(cls, v, values, **kwargs):
         if 'password' in values and v != values["password"]:
             raise ValueError("passwords don't match")
         return v
+
