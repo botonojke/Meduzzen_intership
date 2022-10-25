@@ -1,17 +1,20 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
-from datetime import datetime
-from credentials import Base
+import sqlalchemy
+import datetime
+from db.base import metadata
 
 
-class User(Base):
-    __tablename__ = 'users'
+users = sqlalchemy.Table(
+    'users',
+    metadata,
+    sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True, autoincrement=True, unique=True),
+    sqlalchemy.Column('email', sqlalchemy.String, unique=True),
+    sqlalchemy.Column('name', sqlalchemy.String),
+    sqlalchemy.Column('hashed_password', sqlalchemy.String),
+    sqlalchemy.Column('is_active', sqlalchemy.Boolean, default=True),
+    sqlalchemy.Column('is_admin', sqlalchemy.Boolean, default=False),
+    sqlalchemy.Column('create_date', sqlalchemy.DateTime, default=datetime.datetime.utcnow),
+    sqlalchemy.Column('update_date', sqlalchemy.DateTime, default=datetime.datetime.utcnow),
+    )
 
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(32), nullable=False, index=True)
-    hashed_password = Column(String(64), nullable=False)
-    email = Column(String(64), nullable=False, index=True, unique=True)
-    about_user = Column(String(256), index=True)
-    register_date = Column(DateTime, default=datetime.utcnow)
-    update_date = Column(DateTime, nullable=True)
-    is_active = Column(Boolean, default=True)
-    is_admin = Column(Boolean, default=False)
+
+
