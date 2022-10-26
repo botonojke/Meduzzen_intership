@@ -35,15 +35,19 @@ class UserRepository(BaseRepository):
         )
         return UserRsposneId(id=await self.database.execute(user))
 
-    async def update(self, id: int, u: UserUpdate) -> User:
-        query = users.update().where(users.c.id == id).values(
-            id=id,
-            name=u.name,
-            hashed_password=hash_password(u.password2),
-            update_date=datetime.datetime.utcnow(),
-        )
-        await self.database.execute(query)
-        return query
+    async def update(self, id: int, u: UserUpdate) -> UserRsposneId:
+        now = datetime.datetime.utcnow()
+        updated_data = u.dict(skip_defaults=True)
+        updated_data['update_date'] = now
+        if updated_data.get('password'):
+            updated_data['hashed_password'] = hash_password(updated_data['password'])
+            updated_data.pop('password', None)
+            updated_data.pop('password2', None)
+        u = users.update().values(updated_data).where(users.c.id == id)
+
+        await self.database.execute(u)
+        return UserRsposneId(id=id)
+
 
     async def get_by_email(self, email: str) -> Optional[User]:
         query = users.select().where(users.c.email == email)
