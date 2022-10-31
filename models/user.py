@@ -36,7 +36,7 @@ class UserCreate(BaseModel):
         return v
 
 
-class UserRsposneId(BaseModel):
+class UserResponseId(BaseModel):
     id: int
 
 

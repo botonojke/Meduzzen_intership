@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 
-from core.security import verify_password, create_access_toke
+from core.security import verify_password, create_access_token, token_auth_scheme, VerifyToken
 from endpoints.depends import get_user_repository
 from models.token import Token, Login
 from repositories.users import UserRepository
@@ -16,6 +16,14 @@ async def login(login: Login, users: UserRepository = Depends(get_user_repositor
             detail="Incorrect username or password"
         )
     return Token(
-        access_token=create_access_toke({'sub': user.email}),
+        access_token=create_access_token({'sub': user.email}),
         token_type="Bearer"
     )
+
+@router.post('/me')
+async def auth0(response: Response, token: str = Depends(token_auth_scheme)):
+    result = VerifyToken(token.credentials).verify()
+    if result.get("status"):
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return result
+    return result
