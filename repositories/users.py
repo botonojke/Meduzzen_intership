@@ -4,7 +4,7 @@ from typing import List, Optional
 from sqlalchemy import insert
 
 from db.users import users
-from models.user import User, UserCreate, UserRsposneId, UserUpdate
+from models.user import User, UserCreate, UserResponseId, UserUpdate
 from core.security import hash_password
 from repositories.base import BaseRepository
 
@@ -23,7 +23,7 @@ class UserRepository(BaseRepository):
             return None
         return User.parse_obj(user)
 
-    async def create(self, u: UserCreate) -> UserRsposneId:
+    async def create(self, u: UserCreate) -> UserResponseId:
         user = users.insert().values(
             name=u.name,
             email=u.email,
@@ -33,17 +33,21 @@ class UserRepository(BaseRepository):
             create_date=datetime.datetime.utcnow(),
             update_date=datetime.datetime.utcnow(),
         )
-        return UserRsposneId(id=await self.database.execute(user))
+        return UserResponseId(id=await self.database.execute(user))
 
-    async def update(self, id: int, u: UserUpdate) -> User:
-        query = users.update().where(users.c.id == id).values(
-            id=id,
-            name=u.name,
-            hashed_password=hash_password(u.password2),
-            update_date=datetime.datetime.utcnow(),
-        )
-        await self.database.execute(query)
-        return query
+    async def update(self, id: int, u: UserUpdate) -> UserResponseId:
+        now = datetime.datetime.utcnow()
+        updated_data = u.dict(skip_defaults=True)
+        updated_data['update_date'] = now
+        if updated_data.get('password'):
+            updated_data['hashed_password'] = hash_password(updated_data['password'])
+            updated_data.pop('password', None)
+            updated_data.pop('password2', None)
+        u = users.update().values(updated_data).where(users.c.id == id)
+
+        await self.database.execute(u)
+        return UserResponseId(id=id)
+
 
     async def get_by_email(self, email: str) -> Optional[User]:
         query = users.select().where(users.c.email == email)
@@ -51,3 +55,16 @@ class UserRepository(BaseRepository):
         if user is None:
             return None
         return User.parse_obj(user)
+
+    async def create_user_auth0(self, email: str) -> UserResponseId:
+        user = users.insert().values(
+            name=email.split('@')[0],
+            email=email,
+            hashed_password=hash_password(str(datetime.datetime.utcnow())),
+            is_active=True,
+            is_admin=False,
+            create_date=datetime.datetime.utcnow(),
+            update_date=datetime.datetime.utcnow(),
+        )
+        return await self.database.execute(user)
+
