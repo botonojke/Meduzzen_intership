@@ -68,3 +68,10 @@ class UserRepository(BaseRepository):
         )
         return await self.database.execute(user)
 
+    async def delete(self, id: int):
+        query = users.delete().where(users.c.id == id)
+        user = await self.database.fetch_one(query)
+        if user is None:
+            return None
+        return True
+
