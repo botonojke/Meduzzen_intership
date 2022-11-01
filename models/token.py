@@ -9,3 +9,6 @@ class Token(BaseModel):
 class Login(BaseModel):
     email: EmailStr
     password: str
+
+class EmailForAuth0(BaseModel):
+    email: EmailStr
