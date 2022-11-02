@@ -30,7 +30,16 @@ async def update_user(
         current_user: User = Depends(get_current_user)) -> UserResponseId:
     old_user = await users.get_by_id(id=id)
     if old_user is None or old_user.email != current_user.email:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Not foud user')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Not found user')
     return await users.update(id=id, u=user)
 
-
+@router.delete("/", response_model=UserResponseId)
+async def delete_user(
+        id: int,
+        users: UserRepository = Depends(get_user_repository),
+        current_user: User = Depends(get_current_user)) -> UserResponseId:
+    old_user = await users.get_by_id(id=id)
+    if old_user is None or old_user.email != current_user.email:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Not found user')
+    await users.delete(id=id)
+    return UserResponseId(id=id)
