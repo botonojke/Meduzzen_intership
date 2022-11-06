@@ -2,9 +2,9 @@ import os
 from databases import Database
 from starlette.config import Config
 from configparser import ConfigParser
-# from dotenv import load_dotenv
-#
-# load_dotenv()
+from dotenv import load_dotenv
+
+load_dotenv()
 config = Config(".env")
 DATABASE_URL = config('EE_DATABASE_URL', cast=str)
 WEB_HOST = config('WEB_HOST', cast=str)
