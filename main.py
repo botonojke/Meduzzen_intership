@@ -1,6 +1,6 @@
 from db.base import database
 from fastapi import FastAPI
-from endpoints import users, auth
+from endpoints import users, auth, companies
 from core.config import WEB_PORT, WEB_HOST
 import uvicorn
 
@@ -8,6 +8,7 @@ import uvicorn
 app = FastAPI()
 app.include_router(users.router, prefix='/users', tags=['users'])
 app.include_router(auth.router, prefix='/auth', tags=['auth'])
+app.include_router(companies.router, prefix='/companies', tags=['companies'])
 
 
 @app.get('/')

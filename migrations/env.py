@@ -8,6 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 from alembic import context
 from db.users import users
+from db.base import metadata
+from db.company import companies
 
 
 
@@ -27,7 +29,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = users.metadata
+target_metadata = metadata
 config.set_main_option("sqlalchemy.url", db_url)
 
 # other values from the config, defined by the needs of env.py,
