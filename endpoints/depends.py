@@ -5,6 +5,7 @@ from models.user import User
 from models.company import Company
 from repositories.users import UserRepository
 from repositories.company import CompanyRepository
+from repositories.quiz import QuizRepository
 from db.base import database
 
 
@@ -15,6 +16,8 @@ def get_user_repository() -> UserRepository:
 def get_company_repository() -> CompanyRepository:
     return CompanyRepository(database)
 
+def get_quiz_repository() -> QuizRepository:
+    return QuizRepository(database)
 
 async def get_current_user(
         users: UserRepository = Depends(get_user_repository),

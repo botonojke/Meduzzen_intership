@@ -45,8 +45,8 @@ async def delete_company(
     if company is None or company.user_id != int(current_user.id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company is not found or you are not owner")
     await comp.delete_company(id=id)
-    result = HTTPException(status_code=status.HTTP_200_OK, detail="Company deleted")
-    return result
+    return HTTPException(status_code=status.HTTP_200_OK, detail="Company deleted")
+
 
 
 @router.post("/company/invite", response_model=Invite)
@@ -60,8 +60,8 @@ async def invite_user(
     if company is None or company.user_id != int(current_user.id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company is not found or you are not owner")
     await comp.invite_user(user_id=user_id, company_id=company.id, invite=invite)
-    result = HTTPException(status_code=status.HTTP_200_OK, detail="User invited to the company")
-    return result
+    return HTTPException(status_code=status.HTTP_200_OK, detail="User invited to the company")
+
 
 
 @router.post("/company/request", response_model=Request)
@@ -75,8 +75,8 @@ async def request_for_company(
     elif company.user_id == int(current_user.id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="You can't send request to your company")
     await comp.request(user_id=int(current_user.id), company_id=request.company_id, request=request)
-    result = HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Request send to company")
-    return result
+    return HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Request send to company")
+
 
 
 @router.delete("/company/user")
@@ -90,8 +90,8 @@ async def delete_user(
     if company is None or company.user_id != int(current_user.id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company is not found or you are not owner")
     await comp.delete_user(user_id=user_id, company_id=company_id)
-    result = HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="User delete from company")
-    return result
+    return HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="User delete from company")
+
 
 
 @router.put("/company/user_update", response_model=UpdateCompanyUser)
