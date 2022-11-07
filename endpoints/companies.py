@@ -40,54 +40,59 @@ async def update_company(
 async def delete_company(
         id: int,
         comp: CompanyRepository = Depends(get_company_repository),
-        current_user: PublicUser = Depends(get_current_user)) -> dict:
+        current_user: PublicUser = Depends(get_current_user)) -> HTTPException:
     company = await comp.get_by_id_company(id=id)
     if company is None or company.user_id != int(current_user.id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company is not found or you are not owner")
     await comp.delete_company(id=id)
-    return {'status': True}
+    result = HTTPException(status_code=status.HTTP_200_OK, detail="Company deleted")
+    return result
 
 
-@router.post("/company/invite", response_model=dict)
+@router.post("/company/invite", response_model=Invite)
 async def invite_user(
         invite: Invite,
         company_id: int,
         user_id: int,
         comp: CompanyRepository = Depends(get_company_repository),
-        current_user: PublicUser = Depends(get_current_user)) -> dict:
+        current_user: PublicUser = Depends(get_current_user)) -> HTTPException:
     company = await comp.get_by_id_company(id=company_id)
     if company is None or company.user_id != int(current_user.id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company is not found or you are not owner")
     await comp.invite_user(user_id=user_id, company_id=company.id, invite=invite)
-    return {'status': 'User invited to the company'}
+    result = HTTPException(status_code=status.HTTP_200_OK, detail="User invited to the company")
+    return result
 
 
-@router.post("/company/request", response_model=dict)
+@router.post("/company/request", response_model=Request)
 async def request_for_company(
         request: Request,
         comp: CompanyRepository = Depends(get_company_repository),
-        current_user: PublicUser = Depends(get_current_user)) -> dict:
+        current_user: PublicUser = Depends(get_current_user)) -> HTTPException:
     company = await comp.get_by_id_company(id=request.company_id)
-    print(type(current_user.id))
     if company is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company is not found")
     elif company.user_id == int(current_user.id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="You can't send request to your company")
     await comp.request(user_id=int(current_user.id), company_id=request.company_id, request=request)
-    return {'status': 'Request send to company'}
+    result = HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Request send to company")
+    return result
+
 
 @router.delete("/company/user")
 async def delete_user(
         user_id: int,
         company_id: int,
         comp: CompanyRepository = Depends(get_company_repository),
-        current_user: PublicUser = Depends(get_current_user)) -> dict:
+        current_user: PublicUser = Depends(get_current_user)) -> HTTPException:
     # user = await comp.get_user_from_company(user_id=user_id, company_id=company_id)
     company = await comp.get_by_id_company(id=company_id)
     if company is None or company.user_id != int(current_user.id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company is not found or you are not owner")
     await comp.delete_user(user_id=user_id, company_id=company_id)
-    return {'status': True}
+    result = HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="User delete from company")
+    return result
+
 
 @router.put("/company/user_update", response_model=UpdateCompanyUser)
 async def update_company_user(
@@ -108,7 +113,7 @@ async def access_invite(
         company_id: int,
         company_user: AccessInvite,
         comp: CompanyRepository = Depends(get_company_repository),
-        current_user: PublicUser = Depends(get_current_user)) -> AccessInvite:
+        current_user: PublicUser = Depends(get_current_user)) -> UpdateCompanyUser:
     company = await comp.get_by_id_company(id=company_id)
     if company is None or user_id != int(current_user.id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company is not found")

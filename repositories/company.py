@@ -74,7 +74,6 @@ class CompanyRepository(BaseRepository):
             request=request.request,
         )
         values = {**request.dict()}
-        print(values)
         query = company_users.insert().values(**values)
         await self.database.execute(query=query)
         return request
@@ -108,7 +107,7 @@ class CompanyRepository(BaseRepository):
         await self.database.execute(query=query)
         return user
 
-    async def access_invite(self, company_id: int, user_id: int, company_user: AccessInvite) -> AccessInvite:
+    async def access_invite(self, company_id: int, user_id: int, company_user: AccessInvite) -> UpdateCompanyUser:
         user = UpdateCompanyUser(
             company_id=company_id,
             user_id=user_id,
