@@ -121,3 +121,13 @@ class CompanyRepository(BaseRepository):
                                              company_users.c.company_id == company_id).values(**values)
         await self.database.execute(query=query)
         return user
+
+    async def get_company_admin(self, user_id: int, company_id: int) -> bool:
+        query = company_users.select().where(
+            company_users.c.user_id == user_id,
+            company_users.c.company_id == company_id,
+            company_users.c.is_admin)
+        company_user = await self.database.fetch_one(query=query)
+        if company_user is None:
+            return False
+        return True

@@ -15,12 +15,13 @@ class User(BaseModel):
 
 
 class PublicUser(BaseModel):
-    id: Optional[str] = None
+    id: Optional[int] = None
     name: str
     is_active: bool
     is_admin: bool
     create_date: datetime.datetime
     update_date: datetime.datetime
+
 
 class UserCreate(BaseModel):
     name: str

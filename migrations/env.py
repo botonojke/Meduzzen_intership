@@ -10,6 +10,7 @@ from alembic import context
 from db.users import users
 from db.base import metadata
 from db.company import companies
+from db.quiz import quizzes, questions
 
 
 
