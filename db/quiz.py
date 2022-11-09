@@ -29,3 +29,26 @@ questions = sqlalchemy.Table(
     sqlalchemy.Column('option_4', sqlalchemy.String,  nullable=False),
     sqlalchemy.Column('answer', sqlalchemy.String,  nullable=False),
 )
+
+
+answers = sqlalchemy.Table(
+    'answers',
+    metadata,
+    sqlalchemy.Column('user_id', sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'), nullable=False),
+    sqlalchemy.Column('quiz_id', sqlalchemy.Integer, sqlalchemy.ForeignKey('quizzes.id'), nullable=False),
+    sqlalchemy.Column('company_id', sqlalchemy.Integer, sqlalchemy.ForeignKey('companies.id'), nullable=False),
+    sqlalchemy.Column('create_date', sqlalchemy.DateTime, default=datetime.datetime.utcnow),
+    sqlalchemy.Column('average_quiz_mark', sqlalchemy.Float,  nullable=False),
+    sqlalchemy.Column('right_answers', sqlalchemy.Integer,  nullable=False),
+    sqlalchemy.Column('total_answers', sqlalchemy.Integer,  nullable=False),
+)
+
+
+quiz_rate = sqlalchemy.Table(
+    'quiz_rate',
+    metadata,
+    sqlalchemy.Column('user_id', sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'), nullable=False, unique=True),
+    sqlalchemy.Column('quiz_rate', sqlalchemy.Float, nullable=False),
+    sqlalchemy.Column('total_answers', sqlalchemy.Integer, nullable=False),
+    sqlalchemy.Column('right_answers', sqlalchemy.Integer, nullable=False),
+)

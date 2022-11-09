@@ -1,5 +1,7 @@
 from typing import List
-from models.quiz import Quiz, UpdateQuiz, CreateQuiz, Question, QuestionCreate, QuestionUpdate
+
+from db.base import set_redis
+from models.quiz import Quiz, UpdateQuiz, CreateQuiz, Question, QuestionCreate, QuestionUpdate, Answers, PublicAnswers
 from models.user import PublicUser
 from repositories.company import CompanyRepository
 from repositories.quiz import QuizRepository
@@ -132,3 +134,12 @@ async def delete_question(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="You are not company owner or admin")
     await quizz.delete_quiz_question(question_id=question_id, quiz_id=quiz_id)
     return HTTPException(status_code=status.HTTP_200_OK, detail="question deleted")
+
+
+@router.post("/quiz/answer")
+async def answer(
+        answers: PublicAnswers,
+        quizz: QuizRepository = Depends(get_quiz_repository),
+        current_user: PublicUser = Depends(get_current_user),
+        ) -> Answers:
+    return await quizz.post_answers(user_id=int(current_user.id), answer=answers)

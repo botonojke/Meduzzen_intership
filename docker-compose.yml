@@ -47,6 +47,10 @@ services:
     image: bitnami/redis
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - ./data:/var/lib/redis/data
     networks:
       - app-network
 

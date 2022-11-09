@@ -1,5 +1,5 @@
 import datetime
-from typing import Optional
+from typing import Optional, Dict
 from pydantic import BaseModel, conint, constr
 
 
@@ -57,3 +57,28 @@ class QuestionCreate(BaseModel):
     option_3: constr(max_length=25)
     option_4: constr(max_length=25)
     answer: constr(max_length=25)
+
+
+class PublicAnswers(BaseModel):
+    user_id: int
+    company_id: int
+    quiz_id: int
+    answers: Dict[str, str]
+
+
+class Answers(BaseModel):
+    user_id: int
+    quiz_id: int
+    company_id: int
+    create_date: datetime.datetime
+    average_quiz_mark: float
+    right_answers: int
+    total_answers: int
+
+
+class Rate(BaseModel):
+    user_id: int
+    quiz_rate: float
+    total_answers: int
+    right_answers: int
+
