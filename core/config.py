@@ -3,7 +3,9 @@ from databases import Database
 from starlette.config import Config
 from configparser import ConfigParser
 from dotenv import load_dotenv
-import redis.asyncio as redis
+# import redis.asyncio as redis
+import redis
+import json
 
 
 load_dotenv()
@@ -34,22 +36,17 @@ def set_up():
     return auth0_config
 
 
-async def init_redis_pool() -> redis.Redis:
-    redis_c = await redis.from_url(
-        REDIS,
-        encoding="utf-8",
-        db=0,
-        decode_responses=True,
+def init_redis_pool():
+    redis_c = redis.from_url(
+        REDIS
     )
     return redis_c
 
 
-
-# async def init_redis_pool() -> redis.Redis:
-#     redis_c = await redis.from_url(
-#         'redis://redis',
-#         encoding="utf-8",
-#         db=0,
-#         decode_responses=True,
-#     )
-#     return redis_c
+# questions = {
+#     "1":"right",
+#     "2":"right",
+#     "3":"right",
+# }
+# redis_init = init_redis_pool()
+# redis_init.set(2, json.dumps(questions))

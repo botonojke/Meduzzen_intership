@@ -17,7 +17,7 @@ session = Session()
 Base = declarative_base()
 
 
-async def set_redis(user_id: str, questions: dict):
-    redis_init = await init_redis_pool()
-    redis_init.set(str(user_id), json.dumps([questions]), ex=172800)
-    return redis_init
+def set_redis(user_id: str, questions: dict):
+    redis_init = init_redis_pool()
+    redis_init.set(user_id, json.dumps(questions), ex=172800)
+

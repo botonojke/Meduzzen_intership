@@ -19,11 +19,11 @@ services:
       db:
         condition: service_healthy
     restart: always
-    networks:
-      - practice
+
 
   db:
     image: bitnami/postgresql
+    container_name: postgres_db
     ports:
       - "${DB_PORT}:5432"
     volumes:
@@ -35,8 +35,6 @@ services:
     env_file:
       - ./.env
     restart: always
-    networks:
-      - practice
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}'"]
       interval: 10s
@@ -45,15 +43,12 @@ services:
 
   redis:
     image: bitnami/redis
+    container_name: redis_db
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
       - "${REDIS_PORT}:6379"
     volumes:
       - ./data:/var/lib/redis/data
-    networks:
-      - app-network
 
-networks:
-  practice:
-  app-network:
+

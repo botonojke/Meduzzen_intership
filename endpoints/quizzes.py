@@ -136,7 +136,7 @@ async def delete_question(
     return HTTPException(status_code=status.HTTP_200_OK, detail="question deleted")
 
 
-@router.post("/quiz/answer")
+@router.post("/quiz/answer", response_model=Answers)
 async def answer(
         answers: PublicAnswers,
         quizz: QuizRepository = Depends(get_quiz_repository),

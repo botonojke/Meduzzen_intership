@@ -106,16 +106,9 @@ class QuizRepository(BaseRepository):
         result = [Question(**item) for item in data]
         return result
 
-    # async def get_average_quiz_rate(self, user_id: int):
-    #     query = quiz_rate.select().where(quiz_rate.c.user_id == user_id)
-    #     data = await self.database.fetch_one(query=query)
-    #     if data is None:
-    #
-    #     return data
-
     async def post_answers(self, user_id, answer: PublicAnswers) -> Answers:
         right_answers = 0
-        await set_redis(user_id=user_id, questions=answer.answers)
+        set_redis(user_id=user_id, questions=answer.answers)
         for key, item in answer.answers.items():
             query = questions.select().where(questions.c.id == int(key))
             data = await self.database.fetch_one(query=query)
@@ -126,7 +119,7 @@ class QuizRepository(BaseRepository):
             quiz_id=answer.quiz_id,
             company_id=answer.company_id,
             create_date=datetime.datetime.utcnow(),
-            average_quiz_mark=round((right_answers/len(answer.answers)) * 10, 2),
+            average_quiz_mark=round((right_answers / len(answer.answers)) * 10, 2),
             right_answers=right_answers,
             total_answers=len(answer.answers),
         )
@@ -137,23 +130,23 @@ class QuizRepository(BaseRepository):
         if res is None:
             rate = Rate(
                 user_id=user_id,
-                quiz_rate=round((right_answers/values['total_answers']) * 10, 2),
+                quiz_rate=round((right_answers / values['total_answers']) * 10, 2),
                 total_answers=values['total_answers'],
                 right_answers=right_answers
             )
             value = {**rate.dict()}
             data = quiz_rate.insert().values(**value)
-            # await self.database.execute(query=data)
+            await self.database.execute(query=data)
         if res is not None:
             rate = Rate(
                 user_id=user_id,
-                quiz_rate=(round((right_answers / values['total_answers']) * 10, 2) + res.quiz_rate)/2,
+                quiz_rate=(round((right_answers / values['total_answers']) * 10, 2) + res.quiz_rate) / 2,
                 total_answers=values['total_answers'] + res.total_answers,
                 right_answers=right_answers + res.right_answers
             )
             value = {**rate.dict()}
             value.pop("id", None)
             data = quiz_rate.update().where(quiz_rate.c.user_id == user_id).values(**value)
-            # await self.database.execute(query=data)
-        # await self.database.execute(query=query)
+            await self.database.execute(query=data)
+        await self.database.execute(query=query)
         return answer
