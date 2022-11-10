@@ -108,7 +108,7 @@ class QuizRepository(BaseRepository):
 
     async def post_answers(self, user_id, answer: PublicAnswers) -> Answers:
         right_answers = 0
-        key = f"{user_id}-{answer.company_id}-{answer.quiz_id}"
+        key = f"{answer.company_id}-{answer.quiz_id}-{user_id}"
         set_redis(user_id=key, questions=answer.answers)
         for key, item in answer.answers.items():
             query = questions.select().where(questions.c.id == int(key))
@@ -151,3 +151,4 @@ class QuizRepository(BaseRepository):
             await self.database.execute(query=data)
         await self.database.execute(query=query)
         return answer
+
