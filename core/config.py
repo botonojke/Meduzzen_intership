@@ -3,6 +3,10 @@ from databases import Database
 from starlette.config import Config
 from configparser import ConfigParser
 from dotenv import load_dotenv
+# import redis.asyncio as redis
+import redis
+import json
+
 
 load_dotenv()
 config = Config(".env")
@@ -18,12 +22,10 @@ SECRET_KEY = config(
     cast=str,
     default=KEY,
 )
+REDIS = config("REDIS_URL")
 
 def set_up():
     """Sets up configuration for the app"""
-
-
-
 
     auth0_config = {
         "DOMAIN": os.getenv("DOMAIN", default="your.domain.com"),
@@ -32,3 +34,19 @@ def set_up():
         "ALGORITHMS": os.getenv("ALGORITHMS", default="RS256"),
     }
     return auth0_config
+
+
+def init_redis_pool():
+    redis_c = redis.from_url(
+        REDIS
+    )
+    return redis_c
+
+
+# questions = {
+#     "1":"right",
+#     "2":"right",
+#     "3":"right",
+# }
+# redis_init = init_redis_pool()
+# redis_init.set(2, json.dumps(questions))
