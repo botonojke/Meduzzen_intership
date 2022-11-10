@@ -108,7 +108,8 @@ class QuizRepository(BaseRepository):
 
     async def post_answers(self, user_id, answer: PublicAnswers) -> Answers:
         right_answers = 0
-        set_redis(user_id=user_id, questions=answer.answers)
+        key = f"{user_id}-{answer.company_id}-{answer.quiz_id}"
+        set_redis(user_id=key, questions=answer.answers)
         for key, item in answer.answers.items():
             query = questions.select().where(questions.c.id == int(key))
             data = await self.database.fetch_one(query=query)
